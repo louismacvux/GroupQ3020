@@ -11,7 +11,7 @@ import {
 import { AppContext } from '../../App';
 
 const HomeAccordion = () => {
-     const appData = useContext(AppContext);
+     const [appData] = useContext(AppContext);
      const { homeAccordionItems } = appData.settings;
      return (
           <div>

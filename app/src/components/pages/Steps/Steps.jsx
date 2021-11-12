@@ -6,7 +6,7 @@ import RecordTable from "../../tracking/RecordTable";
 import ManageGoals from "../../tracking/goals/ManageGoals";
 
 const Steps = () => {
-     const { user } = useContext(AppContext);
+     const [{ user }] = useContext(AppContext);
      let stepTrackingData = user.getTrackingData("steps");
      return (
           <div className="flex flex-col gap-4">

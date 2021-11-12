@@ -6,7 +6,7 @@ import { AppContext } from '../../App';
 const MS_IN_HOUR = 3600000;
 
 const StepsAccordionPreview = () => {
-     const { user } = useContext(AppContext);
+     const [{ user }] = useContext(AppContext);
      const [graphData, setGraphData] = useState();
 
      if (!graphData) {

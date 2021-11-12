@@ -11,8 +11,8 @@ import SleepAccordionPreview from "../../components/pages/Sleep/SleepAccordionPr
 
 const homeAccordionItems = [
      new HomeAccordionItem("Steps", Steps, StepsAccordionPreview),
-     new HomeAccordionItem("Diet", Diet, DietAccordionPreview),
      new HomeAccordionItem("Distance", Distance, DistanceAccordionPreview),
+     new HomeAccordionItem("Diet", Diet, DietAccordionPreview),
      new HomeAccordionItem("Sleep", Sleep, SleepAccordionPreview),
 ]
 
@@ -31,19 +31,21 @@ export const options = {
 }
 
 class AppSettings {
-     theme = options.theme[0];
-     startofweek = 0;
-     units = {
-          height: options.units.height[0],
-          weight: options.units.weight[0],
-          distance: options.units.distance[0],
-          energy: options.units.energy[0]
-     };
-     graphs = {
-          stepMode: options.graphs.stepMode[0],
-          caloriesMode: options.graphs.caloriesMode[0],
-     };
-     homeAccordionItems = homeAccordionItems;
+     constructor() {
+          this.theme = options.theme[0];
+          this.startofweek = 0;
+          this.units = {
+               height: options.units.height[0],
+               weight: options.units.weight[0],
+               distance: options.units.distance[0],
+               energy: options.units.energy[0]
+          };
+          this.graphs = {
+               stepMode: options.graphs.stepMode[0],
+               caloriesMode: options.graphs.caloriesMode[0],
+          };
+          this.homeAccordionItems = homeAccordionItems;
+     }
 }
 
 export default AppSettings;
