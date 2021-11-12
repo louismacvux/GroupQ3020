@@ -9,6 +9,7 @@ A group project for COMP 3020, making a front end interface for a mobile app
 
 ## Libraries
 - React (`react`)
+- Tailwind (`tailwind`) for CSS utility classes
 - Chakra UI (`chakra-ui`) for high level component templates
 - Recharts (`recharts`) for data visualization
-- React Icons (`react-icons`)
+- React Icons (`react-icons`) for interface icons
