@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import Card from "../layouts/Card";
 import { daysInMonth, DAY_DURATION, HOUR_DURATION, MINUTE_DURATION } from "../../js/utils/time";
+import dayjs from "dayjs";
+
 import {
      Text,
-     Button,
      Modal,
      ModalOverlay,
      ModalContent,
      ModalHeader,
-     ModalFooter,
      ModalBody,
      ModalCloseButton,
      useDisclosure
@@ -17,7 +17,7 @@ import {
 import toTitleCase from "../../js/utils/toTitleCase";
 
 
-const periods = {
+const periodParams = {
      "daily": {
           summaryInterval: HOUR_DURATION * 2,
           getStart: () => {
@@ -25,10 +25,11 @@ const periods = {
                date.setHours(0, 0, 0, 0);
                return date;
           },
-          getDuration: () => DAY_DURATION,
-          formatTime: (bucketTime) => {
-               return bucketTime.toTimeString().slice(0, 5)
-          }
+          getDuration: (bucketStartTime) => DAY_DURATION,
+          getTimeColumn: (bucketStartTime, bucketEndTime) => (`
+                    ${dayjs(bucketStartTime).format("HH:mm A")} -
+                    ${dayjs(bucketEndTime).format("HH:mm A")}
+               `)
      },
      "weekly": {
           summaryInterval: DAY_DURATION + HOUR_DURATION,
@@ -38,11 +39,10 @@ const periods = {
                date.setDate(date.getDate() - date.getDay());
                return date;
           },
-          getDuration: () => DAY_DURATION * 7,
-          formatTime: (bucketTime) => {
-               let options = { weekday: 'long', day: 'numeric' };
-               return new Intl.DateTimeFormat('en-US', options).format(bucketTime)
-          }
+          getDuration: (bucketStartTime) => DAY_DURATION * 7,
+          getTimeColumn: (bucketStartTime, bucketEndTime) => (
+               dayjs(bucketStartTime).format("dddd D")
+          )
      },
      "monthly": {
           summaryInterval: DAY_DURATION + HOUR_DURATION,
@@ -51,13 +51,12 @@ const periods = {
                date.setDate(1);
                return date;
           },
-          getDuration: (start) => {
-               return daysInMonth(start) * DAY_DURATION;
+          getDuration: (bucketStartTime) => {
+               return daysInMonth(bucketStartTime) * DAY_DURATION;
           },
-          formatTime: (bucketTime) => {
-               let options = { month: 'long', day: 'numeric' };
-               return new Intl.DateTimeFormat('en-US', options).format(bucketTime)
-          }
+          getTimeColumn: (bucketStartTime, bucketEndTime) => (
+               dayjs(bucketStartTime).format("dddd D")
+          )
      }
 }
 
@@ -80,36 +79,40 @@ const RecordTable = (props) => {
      let lastRecordTime = recordList.records[recordList.records.length - 1].time.getTime();
 
      // You can change pages only if the new page has entries
-     let canPageLeft = dateRange.end.getTime() - periods[period].getDuration() < firstRecordTime;
-     let canPageRight = dateRange.start.getTime() + periods[period].getDuration() > lastRecordTime;
+     let canPageLeft = dateRange.end.getTime() - periodParams[period].getDuration(dateRange.start) < firstRecordTime;
+     let canPageRight = dateRange.start.getTime() + periodParams[period].getDuration(dateRange.start) > lastRecordTime;
 
      // Function to update date range when page is flipped. Left = -1, Right = 1.
      let flipPage = (direction) => {
           if (direction === -1 || direction === 1) {
                setDateRange(prevDateRange => {
-                    let start = new Date(prevDateRange.start.getTime() + direction * periods[period].getDuration(TODAY));
-                    let end = new Date(start.getTime() + periods[period].getDuration(TODAY));
+                    let start = new Date(prevDateRange.start.getTime() + direction * periodParams[period].getDuration(TODAY));
+                    let end = new Date(start.getTime() + periodParams[period].getDuration(TODAY));
                     return { start, end };
                })
           }
      }
 
      // Summarize data in date range
-     let pooledRecords = recordList.aggregateByTime(periods[period].summaryInterval, dateRange.start, dateRange.end);
+     let pooledRecords = recordList.aggregateByTime(periodParams[period].summaryInterval, dateRange.start, dateRange.end);
 
      // When period type changes (i.e. "daily", "weekly", "monthly"), update the date range accordingly.
      useEffect(() => {
           setDateRange(() => {
-               let start = periods[period].getStart(TODAY);
-               let end = new Date(start.getTime() + periods[period].getDuration(start));
+               let start = periodParams[period].getStart(TODAY);
+               let end = new Date(start.getTime() + periodParams[period].getDuration(start));
                return { start, end };
           })
      }, [period]);
 
+     // Create title based on period type
      const getTitle = () => {
-          let title = dateRange.start.toDateString();
-          if (period != "daily") {
-               title += '  -  ' + dateRange.end.toDateString();
+          let title;
+          if (period === "daily") {
+               title = dayjs(dateRange.start).format("dddd, MMMM D");
+          }
+          else {
+               title = `${dayjs(dateRange.start).format("MMMM D")} - ${dayjs(dateRange.end).format("MMMM D")}`;
           }
           return title
      }
@@ -126,14 +129,14 @@ const RecordTable = (props) => {
                          pooledRecords.map((record, index) => {
                               return (
                                    <div className="flex flex-row w-full justify-between p-2" key={index}>
-                                        <span>{periods[period].formatTime(record.time)}</span>
+                                        <span>{periodParams[period].getTimeColumn(record.time, record.end)}</span>
                                         <span>{record.data}</span>
                                    </div>
                               )
                          })
                     }
                </div>
-               <PeriodSelectionModal periodOptions={Object.keys(periods)} period={period} setPeriod={setPeriod} isOpen={isOpen} onClose={onClose} />
+               <PeriodSelectionModal periodOptions={Object.keys(periodParams)} period={period} setPeriod={setPeriod} isOpen={isOpen} onClose={onClose} />
           </Card>
      )
 }
@@ -156,7 +159,7 @@ const PeriodSelectionModal = (props) => {
                          <div className="flex flex-col">
                               {
                                    periodOptions.map((option, index) => (
-                                        <div className="py-4 cursor-pointer" onClick={() => handleSelect(option)}>
+                                        <div className="py-4 cursor-pointer" onClick={() => handleSelect(option)} key={index}>
                                              <Text>{toTitleCase(option)}</Text>
                                         </div>
                                    ))
