@@ -10,7 +10,7 @@ const Steps = () => {
      let stepTrackingData = user.getTrackingData("steps");
      return (
           <div className="flex flex-col gap-4">
-               <RecordTable recordList={stepTrackingData.records} summaryInterval={4} />
+               <RecordTable recordList={stepTrackingData.records} summaryInterval={2} />
                <AddRecord />
                <ManageGoals trackingData={stepTrackingData} />
           </div>

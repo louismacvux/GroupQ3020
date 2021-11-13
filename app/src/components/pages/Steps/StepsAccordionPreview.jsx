@@ -24,8 +24,8 @@ const StepsAccordionPreview = () => {
                     <ResponsiveContainer >
                          <BarChart data={graphData}>
                               <CartesianGrid />
-                              <XAxis dataKey="label" padding={{ left: 60 }} />
-                              <YAxis dataKey="data" mirror="true" />
+                              <XAxis dataKey="label" padding={{ left: 60 }} axisList={false} />
+                              <YAxis dataKey="data" mirror="true" axisList={false} />
                               <Bar dataKey="data" fill="#319795" barSize={4} />
                          </BarChart>
                     </ResponsiveContainer>

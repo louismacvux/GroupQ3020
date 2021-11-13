@@ -1,6 +1,7 @@
 import TrackingData from "./tracking/TrackingData";
 import TrackingDataGroup from "./tracking/TrackingDataGroup";
 
+import { normal, uniform } from "jstat";
 import randomInRange from "../utils/randomInRange";
 const { round } = Math;
 
@@ -29,19 +30,34 @@ class UserData {
      }
 
      static generateUserData() {
-          let stepsPerDay = { min: 2500, max: 7500 };
-          let recordFrequency = 1000 * 60 * 60; // 1 Hour
-          let recordCount = 24 * 28; // 24 hours * 28 days
+          const DAY_COUNT = 28;
+          const HOUR_DURATION = 1000 * 60 * 60;
+          const DAY_DURATION = HOUR_DURATION * 24;
+          const ACTIVITY_PERIOD = { START: 9, END: 22, PEAK: 14, SPREAD: 3 };
+
+          let stepsPerDay = { min: 4000, max: 8000 };
           let userData = new UserData();
 
-          // Generate step data
-          for (let i = 0; i < recordCount; i++) {
-               // Generate records moving backwards, starting from today
-               let time = new Date(Date.now() - recordFrequency * i);
-               // Random step count between min/max
-               let steps = round(randomInRange(stepsPerDay.min, stepsPerDay.max) / 24);
+          let date = new Date(Date.now() - DAY_COUNT * DAY_DURATION);
+          date.setHours(0, 0, 0, 0, 0);
+          date = date.getTime();
 
-               userData.getRecords("steps").addRecord(time, steps);
+          // For each day in range
+          for (let i = 0; i <= DAY_COUNT; i++, date += DAY_DURATION) {
+
+               // For each hour in day
+               for (let hour = ACTIVITY_PERIOD.START; hour < ACTIVITY_PERIOD.END; hour++) {
+                    let timeOfRecord = date + hour * HOUR_DURATION;
+                    if (timeOfRecord > Date.now()) {
+                         break;
+                    }
+
+                    let maximumSteps = stepsPerDay.min + (stepsPerDay.max - stepsPerDay.min) * (3 / 2) * uniform.sample(0, 0.125);
+                    let normalMagnitude = normal.pdf(hour, ACTIVITY_PERIOD.PEAK, ACTIVITY_PERIOD.SPREAD);
+                    let steps = round(maximumSteps * normalMagnitude);
+
+                    userData.getRecords("steps").addRecord(new Date(timeOfRecord), steps);
+               }
           }
 
           // Generate step goals
