@@ -15,6 +15,12 @@ class TrackingData {
      setGoal(period, type, value) {
           this.goals.setGoal(period, type, value);
      }
+     copy() {
+          let copy = new TrackingData(this.name);
+          copy.records = this.records;
+          copy.goals = this.goals;
+          return copy;
+     }
 }
 
 export default TrackingData;

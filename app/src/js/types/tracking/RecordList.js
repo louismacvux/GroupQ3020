@@ -35,6 +35,7 @@ class RecordList {
                          currentBucketStartTime = startTime + Math.floor((timeOfRecord - startTime) / bucketDuration) * bucketDuration;
                          currentBucketEndTime = currentBucketStartTime + bucketDuration;
                     }
+                    // Initialize bucket if it does not exist
                     if (!result[currentBucket]) {
                          result[currentBucket] = { time: new Date(currentBucketStartTime), end: new Date(currentBucketEndTime), data: 0 };
                     }

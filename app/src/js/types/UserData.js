@@ -2,8 +2,15 @@ import TrackingData from "./tracking/TrackingData";
 import TrackingDataGroup from "./tracking/TrackingDataGroup";
 
 import { normal, uniform } from "jstat";
-import randomInRange from "../utils/randomInRange";
+import { HOUR_DURATION, DAY_DURATION } from "../utils/time";
+
 const { round } = Math;
+
+const generatedDataParams = {
+     DAY_COUNT: 28,
+     ACTIVITY_PERIOD: { START: 9, END: 22, PEAK: 14, SPREAD: 3 },
+     STEPS_PER_DAY: { MIN: 4000, MAX: 8000 },
+}
 
 class UserData {
 
@@ -30,12 +37,12 @@ class UserData {
      }
 
      static generateUserData() {
-          const DAY_COUNT = 28;
-          const HOUR_DURATION = 1000 * 60 * 60;
-          const DAY_DURATION = HOUR_DURATION * 24;
-          const ACTIVITY_PERIOD = { START: 9, END: 22, PEAK: 14, SPREAD: 3 };
+          const {
+               DAY_COUNT, // The number of days to generate records for
+               ACTIVITY_PERIOD, // Object specifying the hours when activity starts, peaks, ends, and how spread it is
+               STEPS_PER_DAY, // Object specifying the minimum and maximum number of steps the user can have in a day
+          } = generatedDataParams;
 
-          let stepsPerDay = { min: 4000, max: 8000 };
           let userData = new UserData();
 
           let date = new Date(Date.now() - DAY_COUNT * DAY_DURATION);
@@ -52,9 +59,10 @@ class UserData {
                          break;
                     }
 
-                    let maximumSteps = stepsPerDay.min + (stepsPerDay.max - stepsPerDay.min) * (3 / 2) * uniform.sample(0, 0.125);
-                    let normalMagnitude = normal.pdf(hour, ACTIVITY_PERIOD.PEAK, ACTIVITY_PERIOD.SPREAD);
-                    let steps = round(maximumSteps * normalMagnitude);
+                    let steps = round(
+                         uniform.sample(STEPS_PER_DAY.MIN, STEPS_PER_DAY.MAX) *
+                         normal.pdf(hour, ACTIVITY_PERIOD.PEAK, ACTIVITY_PERIOD.SPREAD)
+                    )
 
                     userData.getRecords("steps").addRecord(new Date(timeOfRecord), steps);
                }
@@ -64,9 +72,9 @@ class UserData {
           let generateRandomStepGoal = (type) => {
                const daysInPeriod = { "daily": 1, "weekly": 7, "monthly": 28 };
                if (daysInPeriod[type]) {
-                    let goalValue = round(randomInRange(stepsPerDay.min, stepsPerDay.max) * daysInPeriod[type]);
+                    let goalValue = round(uniform.sample(STEPS_PER_DAY.MIN, STEPS_PER_DAY.MAX) * daysInPeriod[type]);
                     goalValue = round(goalValue / 500) * 500;
-                    userData.getTrackingData("steps").setGoal(type, "minimum", goalValue);
+                    userData.getTrackingData("steps").setGoal(type, "MINimum", goalValue);
                }
           }
 
