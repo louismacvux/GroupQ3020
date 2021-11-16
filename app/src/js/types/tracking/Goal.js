@@ -1,18 +1,3 @@
-const durations = {
-     "daily": 1000 * 60 * 60 * 24,
-     "weekly": 1000 * 60 * 60 * 7,
-     "monthly": 1000 * 60 * 60 * 28,
-}
-
-const progressFunctions = {
-     "minimum": (current, goal) => {
-          return current / goal;
-     },
-     "maximum": (current, goal) => {
-          return current / goal;
-     },
-}
-
 class Goal {
      constructor(period, type, value, trackingData) {
           this.period = period;

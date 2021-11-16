@@ -1,4 +1,5 @@
 import TrackingData from "./TrackingData";
+import VirtualTrackingData from "./VirtualTrackingData";
 
 class TrackingDataGroup {
 
@@ -13,10 +14,10 @@ class TrackingDataGroup {
           for (let i = 0; i < keys.length && !result; i++) {
                let key = keys[i];
                let groupMember = this.group[key];
-               if (groupMember instanceof TrackingData && groupMember.name.toLowerCase() === name.toLowerCase()) {
+               if ((groupMember instanceof TrackingData || groupMember instanceof VirtualTrackingData) && groupMember.name.toLowerCase() === name.toLowerCase()) {
                     result = groupMember;
                }
-               else if (groupMember instanceof TrackingDataGroup) {
+               else if (groupMember instanceof VirtualTrackingData || groupMember instanceof TrackingDataGroup) {
                     result = groupMember.getTrackingData(name);
                }
           }

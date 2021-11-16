@@ -22,7 +22,7 @@ const AddEntry = (props) => {
                recordValue = Number(recordValue);
 
                let time = new Date(Date.now());
-               let hourOffset = ampm === "pm" ? 12 : 0;
+               let hourOffset = hour < 12 && ampm === "pm" ? 12 : 0;
                time.setHours(hour + hourOffset);
                time.setMinutes(minute);
 
@@ -37,7 +37,7 @@ const AddEntry = (props) => {
                let currentTime = dayjs();
                hour = Number(hour);
                minute = Number(minute);
-               if (ampm === "pm") {
+               if (hour < 12 && ampm === "pm") {
                     hour += 12;
                }
                if (hour > currentTime.hour() || (hour === currentTime.hour() && minute > currentTime.minute())) {
@@ -46,6 +46,7 @@ const AddEntry = (props) => {
                return errors;
           },
           validateOnChange: false,
+          validateOnBlur: false,
      }
 
      return (

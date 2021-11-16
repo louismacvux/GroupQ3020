@@ -3,17 +3,7 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import Card from "../layouts/Card";
 import { daysInMonth, DAY_DURATION, HOUR_DURATION, MINUTE_DURATION } from "../../js/utils/time";
 import dayjs from "dayjs";
-
-import {
-     Text,
-     Modal,
-     ModalOverlay,
-     ModalContent,
-     ModalHeader,
-     ModalBody,
-     ModalCloseButton,
-     useDisclosure
-} from "@chakra-ui/react"
+import { Table, Thead, Tr, Th, Td, Tbody, Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react"
 import toTitleCase from "../../js/utils/toTitleCase";
 
 
@@ -78,7 +68,7 @@ const RecordTable = (props) => {
      let firstRecordTime = recordList.records[0].time.getTime();
      let lastRecordTime = recordList.records[recordList.records.length - 1].time.getTime();
 
-     // You can change pages only if the new page has entries
+     // You can change pages only if the next page has entries
      let canPageLeft = dateRange.end.getTime() - periodParams[period].getDuration(dateRange.start) < firstRecordTime;
      let canPageRight = dateRange.start.getTime() + periodParams[period].getDuration(dateRange.start) > lastRecordTime;
 
@@ -124,18 +114,26 @@ const RecordTable = (props) => {
                     <span className="text-center cursor-pointer" onClick={onOpen}>{getTitle()}</span>
                     <HiChevronRight className={`w-5 h-5 cursor-pointer ${!canPageRight || "invisible"}`} onClick={() => canPageRight || flipPage(1)} />
                </div>
-               <div className="h-full pt-4">
-                    {
-                         pooledRecords.map((record, index) => {
-                              return (
-                                   <div className="flex flex-row w-full justify-between p-2" key={index}>
-                                        <span>{periodParams[period].getTimeColumn(record.time, record.end)}</span>
-                                        <span>{record.data}</span>
-                                   </div>
-                              )
-                         })
-                    }
-               </div>
+               <Table>
+                    <Thead>
+                         <Tr>
+                              <Th>Period</Th>
+                              <Th isNumeric>Total</Th>
+                         </Tr>
+                    </Thead>
+                    <Tbody>
+                         {
+                              pooledRecords.map(({ time, end, data }, index) => {
+                                   return (
+                                        <Tr key={index}>
+                                             <Td>{periodParams[period].getTimeColumn(time, end)}</Td>
+                                             <Td isNumeric>{data}</Td>
+                                        </Tr>
+                                   )
+                              })
+                         }
+                    </Tbody>
+               </Table>
                <PeriodSelectionModal periodOptions={Object.keys(periodParams)} period={period} setPeriod={setPeriod} isOpen={isOpen} onClose={onClose} />
           </Card>
      )

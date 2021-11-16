@@ -2,11 +2,11 @@ import { Table, Thead, Tr, Th, Td, Tbody } from "@chakra-ui/react";
 import toTitleCase from "../../../js/utils/toTitleCase";
 
 const GoalTable = (props) => {
-     let { period, goals } = props;
+     let { goals } = props;
      let flattenedGoals = goals.getFlattened();
      return (
           <div>
-               <Table variant="unstyled">
+               <Table>
                     <Thead>
                          <Tr>
                               <Th>Type</Th>

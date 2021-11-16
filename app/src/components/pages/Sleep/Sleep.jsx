@@ -1,7 +1,7 @@
 const Sleep = () => {
      return (
           <div>
-               This is the distance page.
+               This is the sleep page.
           </div>
      )
 }
