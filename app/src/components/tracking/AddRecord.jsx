@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, Button, NumberInput, NumberInputField, useToast, FormErrorMessage } from "@chakra-ui/react";
-import Card from "../layouts/Card";
+import Card from "../layouts/Card/Card";
 import TimeSelector from "../forms/TimeSelector";
 import { Formik, Form, Field } from "formik";
 import dayjs from "dayjs";
@@ -50,7 +50,7 @@ const AddEntry = (props) => {
      }
 
      return (
-          <Card className="flex flex-col gap-6" >
+          <div className="flex flex-col gap-6" >
                <Formik {...formikProps}>
                     {props => {
                          const { values, touched, errors, dirty, isSubmitting, handleChange, handleBlur, handleSubmit, handleReset } = props;
@@ -72,14 +72,14 @@ const AddEntry = (props) => {
                                              </Field>
                                         </div>
                                         <Button type="submit" colorScheme="teal" variant="solid">
-                                             Add Steps
+                                             Add {trackingData.name}
                                         </Button>
                                    </div>
                               </Form>
                          );
                     }}
                </Formik>
-          </Card>
+          </div>
      )
 }
 

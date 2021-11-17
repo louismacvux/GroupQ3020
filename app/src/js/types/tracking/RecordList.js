@@ -1,6 +1,6 @@
 class RecordList {
-     constructor() {
-          this.records = [];
+     constructor(records) {
+          this.records = records || [];
      }
      addRecord(time, data) {
           if (time !== undefined && time !== null && data !== undefined && data !== null) {
@@ -49,7 +49,12 @@ class RecordList {
      computeTotalOverPeriod(startDate, endDate) {
           let bucketDuration = endDate.getTime() - startDate.getTime();
           let aggregated = this.aggregateByTime(bucketDuration, startDate, endDate);
-          return aggregated[0].data;
+          if (aggregated.length > 0) {
+               return aggregated[0].data;
+          }
+          else {
+               return 0;
+          }
      }
 }
 

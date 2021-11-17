@@ -1,16 +1,27 @@
+import { useState } from "react";
 import GoalTable from "./GoalTable";
-import Card from "../../layouts/Card";
+import CardTitle from "../../layouts/Card/CardTitle";
+import { HiCheck, HiPencil } from "react-icons/hi";
 
 const ManageGoals = (props) => {
      let { trackingData } = props;
      let { goals } = trackingData;
+
+     const [isEditing, setIsEditing] = useState(false);
+
+     let rightIcon = isEditing ?
+          (
+               <HiCheck className="cursor-pointer" onClick={() => setIsEditing(false)} />
+          ) :
+          (
+               <HiPencil className="cursor-pointer" onClick={() => setIsEditing(true)} />
+          )
+
      return (
-          <Card className="flex flex-col gap-6" title="Goals">
-               <GoalTable goals={goals} />
-               {/* <Button colorScheme="teal" variant="solid">
-                    Edit Goals
-               </Button> */}
-          </Card>
+          <div>
+               <CardTitle title="Goals" rightIcon={rightIcon} />
+               <GoalTable goals={goals} title="Goals" isEditing={isEditing} />
+          </div>
      )
 }
 

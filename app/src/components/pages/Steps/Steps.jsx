@@ -1,9 +1,10 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../../App";
 
 import AddRecord from "../../tracking/AddRecord";
-import RecordTable from "../../tracking/RecordTable";
+import TrackingDataTable from "../../tracking/TrackingDataTable";
 import ManageGoals from "../../tracking/goals/ManageGoals";
+import CardStackLayout from "../../layouts/CardStackLayout";
 
 const Steps = () => {
      // Get user data object from global app context
@@ -14,11 +15,11 @@ const Steps = () => {
      const refreshTrackingData = () => setTrackingDataState((t) => (t.copy()));
 
      return (
-          <div className="flex flex-col gap-4">
-               <RecordTable recordList={trackingDataState.records} summaryInterval={2} />
+          <CardStackLayout>
+               <TrackingDataTable trackingData={trackingDataState} summaryInterval={2} periodOptions={["daily", "weekly", "monthly"]} />
                <AddRecord trackingData={trackingDataState} refreshTrackingData={refreshTrackingData} />
                <ManageGoals trackingData={trackingDataState} />
-          </div>
+          </CardStackLayout>
      )
 }
 

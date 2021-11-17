@@ -2,6 +2,7 @@ import TrackingData from "./tracking/TrackingData";
 import VirtualTrackingData from "./tracking/VirtualTrackingData";
 import TrackingDataGroup from "./tracking/TrackingDataGroup";
 
+import dayjs from "dayjs";
 import { normal, uniform } from "jstat";
 import { HOUR_DURATION, DAY_DURATION } from "../utils/time";
 
@@ -14,26 +15,32 @@ const generatedDataParams = {
      SLEEP: { MIN_BEDTIME_OFFSET: -3, MAX_BEDTIME_OFFSET: 1, MIN_WAKETIME_OFFSET: 6, MAX_WAKETIME_OFFSET: 10 },
 }
 
+const offsetFromMidnightFormatter = (hourOffset) => {
+     let date = new Date();
+     date.setHours(hourOffset);
+     return dayjs(date).format("HH:mma");
+}
+
 class UserData {
 
      constructor() {
           this.trackingData = new TrackingDataGroup(
                {
-                    steps: new TrackingData("Steps"),
-                    distance: new TrackingData("Distance"),
+                    steps: new TrackingData({ name: "Steps" }),
+                    distance: new TrackingData({ name: "Distance" }),
                     diet: new TrackingDataGroup(
                          {
                               calories: new VirtualTrackingData(
                                    {
                                         name: "Calories",
                                         children: {
-                                             protein: new TrackingData("Protein"),
-                                             carbohydrates: new TrackingData("carbohydrates"),
-                                             fat: new TrackingData("fat"),
+                                             protein: new TrackingData({ name: "Protein", displayFormatter: (protein) => `${protein}g` }),
+                                             carbohydrates: new TrackingData({ name: "Carbohydrates", displayFormatter: (carbohydrates) => `${carbohydrates}g` }),
+                                             fat: new TrackingData({ name: "Fat", displayFormatter: (fat) => `${fat}g` }),
                                         },
-                                        computeFromChildren: (proteinValue, carbohydrateValue, fatValue) => {
-                                             let calorieValue = (proteinValue * 4) + (carbohydrateValue * 4) + (fatValue * 9);
-                                             return calorieValue;
+                                        computeFromChildren: ({ protein, carbohydrates, fat }) => {
+                                             let calories = (protein * 4) + (carbohydrates * 4) + (fat * 9);
+                                             return calories;
                                         }
                                    })
                          }),
@@ -43,13 +50,14 @@ class UserData {
                                    {
                                         name: "Duration",
                                         children: {
-                                             wakeTime: new TrackingData("Wake Time"),
-                                             bedTime: new TrackingData("Bed Time"),
+                                             wakeTime: new TrackingData({ name: "Wake Time", displayFormtter: offsetFromMidnightFormatter }),
+                                             bedTime: new TrackingData({ name: "Bed Time", displayFormatter: offsetFromMidnightFormatter }),
                                         },
-                                        computeFromChildren: (wakeTimeValue, bedTimeValue) => {
-                                             let sleepDurationValue = bedTimeValue - wakeTimeValue;
-                                             return sleepDurationValue;
-                                        }
+                                        computeFromChildren: ({ wakeTime, bedTime }) => {
+                                             let duration = wakeTime - bedTime;
+                                             return duration;
+                                        },
+                                        displayFormatter: (hours) => `${round(hours * 10) / 10} Hrs`
                                    })
                          }),
                });
@@ -115,7 +123,11 @@ class UserData {
 
                // For each hour in day
                for (let hour = ACTIVITY_PERIOD.START; hour < ACTIVITY_PERIOD.END; hour++) {
-                    generateSteps(date, hour);
+                    let hourAsDate = new Date(date);
+                    hourAsDate.setHours(hour);
+                    if (hourAsDate.getTime() <= Date.now()) {
+                         generateSteps(date, hour);
+                    }
                }
 
                generateSleep(date);

@@ -4,10 +4,11 @@ import GoalList from "./GoalList";
 // The purpose of this class is to bind tracked data with goals
 
 class TrackingData {
-     constructor(name) {
+     constructor({ name, displayFormatter }) {
           this.name = name;
           this.records = new RecordList();
           this.goals = new GoalList(this);
+          this.displayFormatter = displayFormatter || ((recordData) => recordData);
      }
      addRecord(time, data) {
           this.records.addRecord(time, data);

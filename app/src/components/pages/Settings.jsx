@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useColorMode, FormControl, FormLabel, Switch } from "@chakra-ui/react";
-import Card from "../layouts/Card";
+import Card from "../layouts/Card/Card";
 
 import { AppContext } from "../App";
 
