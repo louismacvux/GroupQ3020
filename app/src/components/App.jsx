@@ -23,7 +23,7 @@ export const AppContext = createContext();
 const App = () => {
      const [appDataState, setAppDataState] = useState(appData);
      return (
-          <div id="App" className="w-screen h-screen flex-1 justify-center items-center">
+          <div id="App" className="w-full h-full border rounded">
                <AppContext.Provider value={[appDataState, setAppDataState]}>
                     <Routes>
                          <Route element={<PrimaryLayout />}>
