@@ -1,60 +1,78 @@
+import Record from "./Record";
+
 class RecordList {
+
+     #list
+
      constructor(records) {
-          this.records = records || [];
+          this.#list = records || [];
      }
-     addRecord(time, data) {
-          if (time !== undefined && time !== null && data !== undefined && data !== null) {
-               this.records.push({
-                    time,
-                    data
-               });
+
+     addRecord({ startTime, endTime, value }) {
+          if (startTime && value != null) {
+               let record = new Record({ startTime, endTime, value })
+               this.list.push(record);
           }
      }
-     aggregateByTime(bucketDuration, startTime, endTime) {
-          startTime = startTime ? new Date(startTime).getTime() : null;
-          endTime = endTime ? new Date(endTime).getTime() : null;
 
-          this.records.sort((a, b) => a.time < b.time ? -1 : 1);
+     aggregateByTime(bucketDuration, periodStartTime, periodEndTime) {
+          periodStartTime = periodStartTime ? new Date(periodStartTime).getTime() : null;
+          periodEndTime = periodEndTime ? new Date(periodEndTime).getTime() : null;
 
-          let currentBucketStartTime = startTime;
-          let currentBucketEndTime = startTime + bucketDuration;
+          this.list.sort((a, b) => a.startTime < b.startTime ? -1 : 1);
+
+          let currentBucketStartTime = periodStartTime;
+          let currentBucketEndTime = periodStartTime + bucketDuration;
           let currentBucket = 0;
           let result = [];
 
           // For each record
-          for (let i in this.records) {
-               let timeOfRecord = this.records[i].time.getTime();
+          for (let i in this.list) {
+               let timeOfRecord = this.list[i].startTime.getTime();
                // If record lies between the start time and end time
-               if ((timeOfRecord >= startTime || !startTime) && (timeOfRecord < endTime || !endTime)) {
+               if ((timeOfRecord >= periodStartTime || !periodStartTime) && (timeOfRecord < periodEndTime || !periodEndTime)) {
                     // If record should go in the next bucket
                     if (timeOfRecord >= currentBucketEndTime) {
                          // Increment bucket and update boundaries
                          if (result[currentBucket]) {
                               currentBucket++;
                          }
-                         currentBucketStartTime = startTime + Math.floor((timeOfRecord - startTime) / bucketDuration) * bucketDuration;
+                         currentBucketStartTime = periodStartTime + Math.floor((timeOfRecord - periodStartTime) / bucketDuration) * bucketDuration;
                          currentBucketEndTime = currentBucketStartTime + bucketDuration;
                     }
                     // Initialize bucket if it does not exist
                     if (!result[currentBucket]) {
-                         result[currentBucket] = { time: new Date(currentBucketStartTime), end: new Date(currentBucketEndTime), data: 0 };
+                         result[currentBucket] = new Record({
+                              startTime: new Date(currentBucketStartTime),
+                              endTime: new Date(currentBucketEndTime),
+                              value: 0
+                         });
                     }
                     // Add record value to current bucket sum
-                    result[currentBucket].data += this.records[i].data;
+                    result[currentBucket].value += this.list[i].value;
                }
           }
 
           return result;
      }
+
      computeTotalOverPeriod(startDate, endDate) {
           let bucketDuration = endDate.getTime() - startDate.getTime();
           let aggregated = this.aggregateByTime(bucketDuration, startDate, endDate);
           if (aggregated.length > 0) {
-               return aggregated[0].data;
+               return aggregated[0].value;
           }
           else {
                return 0;
           }
+     }
+
+     get list() {
+          return this.#list;
+     }
+
+     set list(newList) {
+          this.#list = newList;
      }
 }
 

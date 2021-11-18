@@ -10,9 +10,10 @@ const Sleep = () => {
      // Get user data object from global app context
      const [{ user }] = useContext(AppContext);
      // Store user step data object in local state
-     const [trackingDataState, setTrackingDataState] = useState(user.getTrackingData("duration"));
+     const [trackingDataState, setTrackingDataState] = useState(user.getTrackingParameterByName("duration"));
      // This function will cause a re-render by updating the tracking data state with a new reference
      const refreshTrackingData = () => setTrackingDataState((t) => (t.copy()));
+     console.log(trackingDataState.records)
 
      return (
           <CardStackLayout>

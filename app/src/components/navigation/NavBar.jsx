@@ -7,7 +7,7 @@ const Navbar = () => {
                <Link to="/">
                     <HiHome className="w-8 h-8" />
                </Link>
-               <Link to="/user">
+               <Link to="/profile">
                     <HiUser className="w-8 h-8" />
                </Link>
                <Link to="/settings">

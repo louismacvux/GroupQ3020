@@ -1,5 +1,4 @@
-import { FormControl, FormLabel, Button, NumberInput, NumberInputField, useToast, FormErrorMessage } from "@chakra-ui/react";
-import Card from "../layouts/Card/Card";
+import { FormControl, FormLabel, Button, NumberInput, NumberInputField } from "@chakra-ui/react";
 import TimeSelector from "../forms/TimeSelector";
 import { Formik, Form, Field } from "formik";
 import dayjs from "dayjs";
@@ -27,7 +26,7 @@ const AddEntry = (props) => {
                time.setMinutes(minute);
 
                if (recordValue > 0) {
-                    trackingData.addRecord(time, recordValue);
+                    trackingData.records.addRecord({ startTime: time, value: recordValue });
                     refreshTrackingData();
                     resetForm();
                }

@@ -19,7 +19,7 @@ const ManageGoals = (props) => {
 
      return (
           <div>
-               <CardTitle title="Goals" rightIcon={rightIcon} />
+               <CardTitle rightIcon={rightIcon}>Goals</CardTitle>
                <GoalTable goals={goals} title="Goals" isEditing={isEditing} />
           </div>
      )

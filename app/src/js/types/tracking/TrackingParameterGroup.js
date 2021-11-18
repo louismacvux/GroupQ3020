@@ -1,10 +1,12 @@
-import TrackingData from "./TrackingData";
-import VirtualTrackingData from "./VirtualTrackingData";
+import TrackingParameter from "./TrackingParameter";
+import VirtualTrackingParameter from "./VirtualTrackingParameter";
 
-class TrackingDataGroup {
+class TrackingParameterGroup {
+
+     #group
 
      constructor(trackingDataMap) {
-          this.group = trackingDataMap;
+          this.#group = trackingDataMap;
      }
 
      getTrackingData(name) {
@@ -14,10 +16,10 @@ class TrackingDataGroup {
           for (let i = 0; i < keys.length && !result; i++) {
                let key = keys[i];
                let groupMember = this.group[key];
-               if ((groupMember instanceof TrackingData || groupMember instanceof VirtualTrackingData) && groupMember.name.toLowerCase() === name.toLowerCase()) {
+               if ((groupMember instanceof TrackingParameter || groupMember instanceof VirtualTrackingParameter) && groupMember.name.toLowerCase() === name.toLowerCase()) {
                     result = groupMember;
                }
-               else if (groupMember instanceof VirtualTrackingData || groupMember instanceof TrackingDataGroup) {
+               else if (groupMember instanceof VirtualTrackingParameter || groupMember instanceof TrackingParameterGroup) {
                     result = groupMember.getTrackingData(name);
                }
           }
@@ -32,10 +34,10 @@ class TrackingDataGroup {
           for (let i = 0; i < keys.length; i++) {
                let key = keys[i];
                let groupMember = this.group[key];
-               if (groupMember instanceof TrackingData) {
+               if (groupMember instanceof TrackingParameter) {
                     result = { ...result, [key]: groupMember.goals };
                }
-               else if (groupMember instanceof TrackingDataGroup) {
+               else if (groupMember instanceof TrackingParameterGroup) {
                     result = { ...result, [key]: groupMember.getGoals() };
                }
           }
@@ -43,6 +45,14 @@ class TrackingDataGroup {
           return result;
      }
 
+     get group() {
+          return this.#group;
+     }
+
+     set group(newGroup) {
+          this.#group = newGroup;
+     }
+
 }
 
-export default TrackingDataGroup;
+export default TrackingParameterGroup;

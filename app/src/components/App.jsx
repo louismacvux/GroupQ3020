@@ -6,16 +6,16 @@ import Steps from "./pages/Steps/Steps";
 import Diet from "./pages/Diet/Diet";
 import Distance from "./pages/Distance/Distance";
 import Sleep from "./pages/Sleep/Sleep";
-import User from "./pages/User";
+import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import PrimaryLayout from "./layouts/PrimaryLayout";
 import SecondaryLayout from "./layouts/SecondaryLayout";
 
 import AppSettings from "../js/types/AppSettings";
-import UserData from "../js/types/UserData";
+import User from "../js/types/User";
 
 let appData = {
-     user: UserData.generateUserData(),
+     user: User.generateRandomUser(),
      settings: new AppSettings(),
 }
 export const AppContext = createContext();
@@ -23,7 +23,7 @@ export const AppContext = createContext();
 const App = () => {
      const [appDataState, setAppDataState] = useState(appData);
      return (
-          <div id="App" className="w-full h-full border rounded">
+          <div id="App" className="w-full h-full border">
                <AppContext.Provider value={[appDataState, setAppDataState]}>
                     <Routes>
                          <Route element={<PrimaryLayout />}>
@@ -34,7 +34,7 @@ const App = () => {
                               <Route path="/diet" element={<Diet />} />
                               <Route path="/distance" element={<Distance />} />
                               <Route path="/sleep" element={<Sleep />} />
-                              <Route path="/user" element={<User />} />
+                              <Route path="/profile" element={<Profile />} />
                               <Route path="/settings" element={<Settings />} />
                          </Route>
                     </Routes>

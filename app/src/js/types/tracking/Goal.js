@@ -1,10 +1,17 @@
 class Goal {
+
+     #period
+     #type
+     #value
+     #of
+
      constructor(period, type, value, trackingData) {
-          this.period = period;
-          this.type = type;
-          this.value = value;
-          this.of = trackingData;
+          this.#period = period;
+          this.#type = type;
+          this.#value = value;
+          this.#of = trackingData;
      }
+
      computeProgress() {
           let periodStart = new Date(Date.now());
           periodStart.setHours(0, 0, 0, 0);
@@ -27,6 +34,31 @@ class Goal {
                progress: current / this.value
           }
      }
+
+     get period() {
+          return this.#period;
+     }
+
+     get type() {
+          return this.#type;
+     }
+
+     set type(newType) {
+          this.#type = newType;
+     }
+
+     get value() {
+          return this.#value;
+     }
+
+     set value(newValue) {
+          this.#value = newValue;;
+     }
+
+     get of() {
+          return this.#of;
+     }
+
 }
 
 export default Goal;

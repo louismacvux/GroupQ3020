@@ -1,15 +1,15 @@
 import { Heading } from '@chakra-ui/react';
 
 const CardTitle = (props) => {
-     let { title, leftIcon, rightIcon } = props;
+     let { children, leftIcon, rightIcon } = props;
      return (
           <>
                {
-                    title && (
+                    children && (
                          <>
                               <div className="flex justify-between items-center mb-6">
                                    <div>{leftIcon}</div>
-                                   <Heading as="h2" size="md" className="text-center">{title}</Heading>
+                                   <Heading as="h2" size="md" className="text-center">{children}</Heading>
                                    <div>{rightIcon}</div>
                               </div>
                          </>

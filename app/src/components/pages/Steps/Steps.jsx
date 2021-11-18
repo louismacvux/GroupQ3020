@@ -10,7 +10,7 @@ const Steps = () => {
      // Get user data object from global app context
      const [{ user }] = useContext(AppContext);
      // Store user step data object in local state
-     const [trackingDataState, setTrackingDataState] = useState(user.getTrackingData("steps"));
+     const [trackingDataState, setTrackingDataState] = useState(user.getTrackingParameterByName("steps"));
      // This function will cause a re-render by updating the tracking data state with a new reference
      const refreshTrackingData = () => setTrackingDataState((t) => (t.copy()));
 
