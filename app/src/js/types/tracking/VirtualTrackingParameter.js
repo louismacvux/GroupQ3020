@@ -1,34 +1,37 @@
-import Record from "./Record";
 import RecordList from "./RecordList";
-import TrackingParameter from "./TrackingParameter";
 import TrackingParameterGroup from "./TrackingParameterGroup";
+import GoalList from "./GoalList";
+import TrackingParameterParent from "./TrackingParameterParent";
 
-class VirtualTrackingParameter {
+class VirtualTrackingParameter extends TrackingParameterParent {
 
      #name
+     #parent
      #children
      #computeFromChildren
      #displayFormatter
+     #goals
 
      constructor({ name, children, computeFromChildren, displayFormatter }) {
+          super(children);
           this.#name = name;
-          this.#children = children;
           this.#computeFromChildren = computeFromChildren;
           this.#displayFormatter = displayFormatter || ((recordData) => recordData);
+          this.#goals = new GoalList({ of: this });
      }
 
-     getTrackingData(name) {
+     getDescendentByName(name) {
           let result;
-          let keys = Object.keys(this.children);
+          let keys = Object.keys(super.children);
 
           for (let i = 0; i < keys.length && !result; i++) {
                let key = keys[i];
-               let child = this.children[key];
-               if ((child instanceof TrackingParameter || child instanceof VirtualTrackingParameter) && child.name.toLowerCase() === name.toLowerCase()) {
+               let child = super.children[key];
+               if (child.name.toLowerCase() === name.toLowerCase()) {
                     result = child;
                }
                else if (child instanceof VirtualTrackingParameter || child instanceof TrackingParameterGroup) {
-                    result = child.getTrackingData(name);
+                    result = child.getDescendentByName(name);
                }
           }
 
@@ -37,13 +40,13 @@ class VirtualTrackingParameter {
 
      get records() {
           let recordCount = 0;
-          let keys = Object.keys(this.children);
+          let keys = Object.keys(super.children);
           let childRecordLists = {};
-          let virtualRecordList = new RecordList();
+          let virtualRecordList = new RecordList({ of: this, hasObjectValues: false });
 
           // Add RecordLists from each child to childRecords
           for (let key of keys) {
-               childRecordLists[key] = this.children[key].records;
+               childRecordLists[key] = super.children[key].records;
           }
 
           recordCount = childRecordLists[keys[0]].list.length;
@@ -70,8 +73,12 @@ class VirtualTrackingParameter {
           return this.#name;
      }
 
-     get children() {
-          return this.#children;
+     get parent() {
+          return this.#parent;
+     }
+
+     set parent(newParent) {
+          this.#parent = newParent;
      }
 
      get computeFromChildren() {
@@ -80,6 +87,14 @@ class VirtualTrackingParameter {
 
      get displayFormatter() {
           return this.#displayFormatter;
+     }
+
+     get goals() {
+          let goals = { type: "virtual", goals: this.#goals, children: {} };
+          for (let parameterKey in this.group) {
+               goals.children[parameterKey] = super.children[parameterKey].goals;
+          }
+          return goals;
      }
 
 }

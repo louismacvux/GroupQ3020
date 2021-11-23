@@ -1,7 +1,6 @@
 import RecordList from "./RecordList";
 import GoalList from "./GoalList";
-
-// The purpose of this class is to bind tracked data with goals
+import { reduce } from "lodash";
 
 class TrackingParameter {
 
@@ -9,12 +8,22 @@ class TrackingParameter {
      #records
      #goals
      #displayFormatter
+     #parent
 
-     constructor({ name, displayFormatter }) {
+     constructor({ name, displayFormatter, aggregator }) {
           this.#name = name;
-          this.#records = new RecordList();
-          this.#goals = new GoalList(this);
+          this.#records = new RecordList({ of: this, hasObjectValues: false });
+          this.#goals = new GoalList({ of: this });
           this.#displayFormatter = displayFormatter || ((recordData) => recordData);
+     }
+
+     addRecord(recordParams) {
+          this.#records.insert(recordParams);
+          this.parent.clearCache();
+     }
+
+     addGoal(goalParams) {
+          this.#goals.insert(goalParams);
      }
 
      copy() {
@@ -28,24 +37,28 @@ class TrackingParameter {
           return this.#name;
      }
 
+     set name(newName) {
+          this.#name = newName;
+     }
+
      get records() {
           return this.#records;
+     }
+
+     set records(newRecords) {
+          this.#records = newRecords;
      }
 
      get goals() {
           return this.#goals;
      }
 
-     get displayFormatter() {
-          return this.#displayFormatter;
+     get parent() {
+          return this.#parent;
      }
 
-     set name(newName) {
-          this.#name = newName;
-     }
-
-     set records(newRecords) {
-          this.#records = newRecords;
+     set parent(newParent) {
+          this.#parent = newParent;
      }
 
      set goals(newGoals) {
@@ -55,6 +68,11 @@ class TrackingParameter {
      set displayFormatter(newDisplayFormatter) {
           this.#displayFormatter = newDisplayFormatter;
      }
+
+     get displayFormatter() {
+          return this.#displayFormatter;
+     }
+
 }
 
 export default TrackingParameter;

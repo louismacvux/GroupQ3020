@@ -3,23 +3,22 @@ import { AppContext } from "../../App";
 
 import CardStackLayout from "../../layouts/CardStackLayout";
 import AddRecord from "../../tracking/AddRecord";
-import TrackingDataTable from "../../tracking/TrackingDataTable";
 import ManageGoals from "../../tracking/goals/ManageGoals";
+import PaginatedParameterSummary from "../../tracking/PaginatedParameterSummary.jsx/PaginatedParameterSummary";
 
 const Sleep = () => {
      // Get user data object from global app context
      const [{ user }] = useContext(AppContext);
      // Store user step data object in local state
-     const [trackingDataState, setTrackingDataState] = useState(user.getTrackingParameterByName("duration"));
+     const [trackingParameterState, setTrackingParameterState] = useState(user.getTrackingParameterByName("Sleep"));
      // This function will cause a re-render by updating the tracking data state with a new reference
-     const refreshTrackingData = () => setTrackingDataState((t) => (t.copy()));
-     console.log(trackingDataState.records)
+     const refreshTrackingData = () => setTrackingParameterState((t) => (t.copy()));
 
      return (
           <CardStackLayout>
-               <TrackingDataTable trackingData={trackingDataState} summaryInterval={2} periodOptions={["weekly", "monthly"]} />
-               <AddRecord trackingData={trackingDataState} refreshTrackingData={refreshTrackingData} />
-               <ManageGoals trackingData={trackingDataState} />
+               <PaginatedParameterSummary trackingParameter={trackingParameterState} periodOptions={["weekly", "monthly"]} />
+               <AddRecord trackingData={trackingParameterState} refreshTrackingData={refreshTrackingData} />
+               <ManageGoals trackingData={trackingParameterState} />
           </CardStackLayout>
      )
 }

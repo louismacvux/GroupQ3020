@@ -21,7 +21,7 @@ const StepsAccordionPreview = () => {
                     .records
                     .aggregateByTime(HOUR_DURATION * 2, startTime)
                     .map((record) => ({
-                         label: dayjs(new Date(record.startTime)).format("HH:mma"),
+                         label: dayjs(new Date(record.startTime)).format("h:mma"),
                          value: record.value
                     }))
           )

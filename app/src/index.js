@@ -7,7 +7,7 @@ import AspectRatioContainer from './components/layouts/AspectRatioContainer';
 import './index.css';
 import '../node_modules/tailwindcss/dist/tailwind.min.css';
 import "@fontsource/inter";
-import theme from "./js/theme";
+import theme from "./theme/theme";
 
 import App from './components/App';
 
@@ -15,7 +15,7 @@ ReactDOM.render(
      <React.StrictMode>
           <HashRouter>
                <ChakraProvider theme={theme}>
-                    <ColorModeScript initialColorMode="system" />
+                    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
                     <div className="w-screen h-screen">
                          <AspectRatioContainer aspectRatio={9 / 16} className="p-8">
                               <App />

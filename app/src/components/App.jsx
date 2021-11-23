@@ -7,6 +7,7 @@ import Diet from "./pages/Diet/Diet";
 import Distance from "./pages/Distance/Distance";
 import Sleep from "./pages/Sleep/Sleep";
 import Profile from "./pages/Profile";
+import Goals from "./pages/Goals/Goals";
 import Settings from "./pages/Settings";
 import PrimaryLayout from "./layouts/PrimaryLayout";
 import SecondaryLayout from "./layouts/SecondaryLayout";
@@ -35,6 +36,7 @@ const App = () => {
                               <Route path="/distance" element={<Distance />} />
                               <Route path="/sleep" element={<Sleep />} />
                               <Route path="/profile" element={<Profile />} />
+                              <Route path="/goals" element={<Goals />} />
                               <Route path="/settings" element={<Settings />} />
                          </Route>
                     </Routes>

@@ -10,11 +10,11 @@ const PrimaryLayout = (props) => {
      let title = toTitleCase(pathname.slice(pathname.lastIndexOf('/') + 1)) || "Home";
      document.title = title;
      return (
-          <div className="w-full h-full flex flex-col">
+          <div className="w-full h-full flex flex-col overflow-hidden">
                <div className="flex-grow p-8 overflow-y-scroll">
                     <Outlet />
                </div>
-               <NavBar />
+               <NavBar className="border-t" />
           </div>
      )
 }

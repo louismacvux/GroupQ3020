@@ -5,7 +5,6 @@ import { useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalClo
 
 const GoalTable = (props) => {
      let { goals, isEditing } = props;
-     let flattenedGoals = goals && goals.getFlattened();
      const { isOpen: isAddDialogueOpen, onOpen: onAddDialogueOpen, onClose: onAddDialogueClose } = useDisclosure();
      return (
           <div className="flex flex-col gap-6">
@@ -15,15 +14,14 @@ const GoalTable = (props) => {
                          <Thead>
                               <Tr>
                                    <Th>Type</Th>
-                                   <Th isNumeric={true}>Current</Th>
+                                   {/* <Th isNumeric={true}>Current</Th> */}
                                    <Th isNumeric={true}>Goal</Th>
                                    <Th isNumeric={true}>{isEditing ? "Delete" : "Progress"}</Th>
                               </Tr>
                          </Thead>
                          <Tbody>
                               {
-                                   flattenedGoals && Object.keys(flattenedGoals).map((goalKey, index) => {
-                                        let goal = flattenedGoals[goalKey];
+                                   goals && goals.list && goals.list.map((goal, index) => {
                                         let { current, progress } = goal.computeProgress();
                                         let handleChangeValue = (_, v) => {
                                              goal.value = v;
@@ -36,7 +34,7 @@ const GoalTable = (props) => {
                                                        isEditing ? (
                                                             <>
                                                                  <Td>{toTitleCase(`${goal.period} ${goal.type}`)}</Td>
-                                                                 <Td isNumeric={true}>{current}</Td>
+                                                                 {/* <Td isNumeric={true}>{current}</Td> */}
                                                                  <Td isNumeric={true}>
                                                                       <NumberInput className="flex-shrink-1" defaultValue={goal.value} min={0} onChange={handleChangeValue}>
                                                                            <NumberInputField />
@@ -48,8 +46,8 @@ const GoalTable = (props) => {
                                                             </>
                                                        ) : (
                                                             <>
-                                                                 <Td>{toTitleCase(`${goal.period} ${goal.type}`)}</Td>
-                                                                 <Td isNumeric={true}>{current}</Td>
+                                                                 <Td>{toTitleCase(`${goal.period} ${/*goal.type*/""}`)}</Td>
+                                                                 {/* <Td isNumeric={true}>{current}</Td> */}
                                                                  <Td isNumeric={true}>{goal.value}</Td>
                                                                  <Td isNumeric={true}>{`${Math.round(progress * 100)}%`}</Td>
                                                             </>

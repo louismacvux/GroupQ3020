@@ -10,12 +10,12 @@ const SecondaryLayout = (props) => {
      let title = toTitleCase(pathname.slice(pathname.lastIndexOf('/') + 1));
      document.title = title;
      return (
-          <div className="flex flex-col h-full place-items-stretch">
-               <TitleBar title={title} />
-               <div className="p-8 flex-grow overflow-y-scroll">
+          <div className="relative flex flex-col h-full place-items-stretch overflow-hidden">
+               <TitleBar title={title} className="relative w-full z-50 top-0 left-0" />
+               <div className="relative inset-0 p-8 z-0 flex-grow overflow-y-scroll border-t border-b">
                     <Outlet />
                </div>
-               <NavBar />
+               <NavBar className="relative bottom-0 left-0 w-full z-50" />
           </div>
      )
 }

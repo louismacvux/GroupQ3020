@@ -1,11 +1,12 @@
-import { Heading, Divider } from "@chakra-ui/react";
+import { Box, useStyleConfig } from "@chakra-ui/react";
 
 const Card = (props) => {
-     let { header, className } = props;
+     let { variant, children, ...rest } = props;
+     const styles = useStyleConfig("Card", { variant })
      return (
-          <div className={`w-full h-full border-2 rounded p-6 ${className}`}>
-               {props.children}
-          </div>
+          <Box __css={styles} {...rest}>
+               {children}
+          </Box>
      )
 }
 

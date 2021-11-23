@@ -5,26 +5,14 @@ class GoalList {
      #of
      #list
 
-     constructor(trackingData) {
-          this.#of = trackingData;
-          this.#list = {};
+     constructor(goalListParams) {
+          let { goals, of } = goalListParams || {};
+          this.#list = goals || [];
+          this.#of = of;
      }
 
-     addGoal(period, type, value) {
-          if (period === "daily" || period === "weekly" || period === "monthly") {
-               if (!this.list[period]) {
-                    this.list[period] = {};
-               }
-               this.list[period] = { ...this.list[type], [type]: new Goal(period, type, value, this.of) };
-          }
-     }
-
-     getFlattened() {
-          let result = [];
-          Object.values(this.list).forEach((periodGoals) => {
-               result.push(...Object.values(periodGoals));
-          })
-          return result;
+     addGoal({ period, type, value }) {
+          this.#list.push(new Goal(period, type, value, this.of));
      }
 
      get of() {
