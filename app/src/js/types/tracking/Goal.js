@@ -1,5 +1,6 @@
 import Aggregator from "./Aggregator";
 import TrackingParameterGroup from "./TrackingParameterGroup";
+import VirtualTrackingParameter from "./VirtualTrackingParameter";
 
 class Goal {
 
@@ -30,7 +31,7 @@ class Goal {
 
           let periodEnd = new Date(Date.now());
 
-          if (!(this.of instanceof TrackingParameterGroup)) {
+          if (!(this.of instanceof TrackingParameterGroup || this.of instanceof VirtualTrackingParameter)) {
                periodEnd = null;
           }
 
