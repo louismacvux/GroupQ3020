@@ -1,20 +1,21 @@
 import Record from "./Record";
-import TrackingParameter from "./TrackingParameter";
 import VirtualTrackingParameter from "./VirtualTrackingParameter";
 import RecordList from "./RecordList";
 import TrackingParameterParent from "./TrackingParameterParent";
+import Aggregator from "./Aggregator";
 
 class TrackingParameterGroup extends TrackingParameterParent {
 
      #name
      #parent
-     #children
      #displayFormatter
+     #periodAggregators
 
-     constructor({ name, children, displayFormatter }) {
+     constructor({ name, children, displayFormatter, periodAggregators }) {
           super(children);
           this.#name = name;
           this.#displayFormatter = displayFormatter;
+          this.#periodAggregators = periodAggregators || { "daily": Aggregator.total, "weekly": Aggregator.average, "monthly": Aggregator.average };
      }
 
      addRecord(recordData) {
@@ -32,25 +33,6 @@ class TrackingParameterGroup extends TrackingParameterParent {
                     childParameter.records.addRecord({ startTime, endTime, value: recordValue });
                }
           }
-     }
-
-
-     getGoals() {
-          let result = {};
-          let keys = Object.keys(super.children);
-
-          for (let i = 0; i < keys.length; i++) {
-               let key = keys[i];
-               let child = super.children[key];
-               if (child instanceof TrackingParameter) {
-                    result = { ...result, [key]: child.goals };
-               }
-               else if (child instanceof TrackingParameterGroup) {
-                    result = { ...result, [key]: child.getGoals() };
-               }
-          }
-
-          return result;
      }
 
      get records() {
@@ -85,12 +67,8 @@ class TrackingParameterGroup extends TrackingParameterParent {
           }
      }
 
-     get goals() {
-          let goals = { type: "group", children: {} };
-          for (let parameterKey in super.children) {
-               goals.children[parameterKey] = super.children[parameterKey].goals;
-          }
-          return goals;
+     getAggregator(period) {
+          return this.#periodAggregators[period];
      }
 
      get name() {

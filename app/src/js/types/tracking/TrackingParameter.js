@@ -1,6 +1,6 @@
 import RecordList from "./RecordList";
 import GoalList from "./GoalList";
-import { reduce } from "lodash";
+import Aggregator from "./Aggregator";
 
 class TrackingParameter {
 
@@ -9,12 +9,14 @@ class TrackingParameter {
      #goals
      #displayFormatter
      #parent
+     #periodAggregators
 
-     constructor({ name, displayFormatter, aggregator }) {
+     constructor({ name, records, goals, displayFormatter, periodAggregators }) {
           this.#name = name;
-          this.#records = new RecordList({ of: this, hasObjectValues: false });
-          this.#goals = new GoalList({ of: this });
+          this.#records = records || new RecordList({ of: this, hasObjectValues: false });
+          this.#goals = goals || new GoalList({ of: this });
           this.#displayFormatter = displayFormatter || ((recordData) => recordData);
+          this.#periodAggregators = periodAggregators || { "daily": Aggregator.total, "weekly": Aggregator.total, "monthly": Aggregator.total };
      }
 
      addRecord(recordParams) {
@@ -26,11 +28,8 @@ class TrackingParameter {
           this.#goals.insert(goalParams);
      }
 
-     copy() {
-          let copy = new TrackingParameter(this.name);
-          copy.records = this.records;
-          copy.goals = this.goals;
-          return copy;
+     getAggregator(period) {
+          return this.#periodAggregators[period];
      }
 
      get name() {
@@ -71,6 +70,15 @@ class TrackingParameter {
 
      get displayFormatter() {
           return this.#displayFormatter;
+     }
+
+     copy() {
+          return new TrackingParameter({
+               name: this.#name,
+               records: this.#records,
+               goals: this.#goals,
+               displayFormatter: this.#displayFormatter,
+          });
      }
 
 }

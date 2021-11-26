@@ -4,6 +4,8 @@ import CardStackLayout from '../../layouts/CardStackLayout';
 import PaginatedParameterSummary from '../../tracking/PaginatedParameterSummary.jsx/PaginatedParameterSummary';
 import AddFood from './AddFood';
 import ManageGoals from '../../tracking/goals/ManageGoals';
+import Goals from '../Goals/Goals';
+import RecordList from '../../../js/types/tracking/RecordList';
 
 const Diet = () => {
      // Get user data object from global app context
@@ -31,7 +33,7 @@ const Diet = () => {
                <AddFood />
                {
                     user && (
-                         <ManageGoals trackingData={user.getTrackingParameterByName("Calories")} />
+                         <ManageGoals trackingParameter={trackingParameterState}></ManageGoals>
                     )
                }
           </CardStackLayout>

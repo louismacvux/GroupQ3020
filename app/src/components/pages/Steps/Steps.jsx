@@ -5,8 +5,6 @@ import AddRecord from "../../tracking/AddRecord";
 import ManageGoals from "../../tracking/goals/ManageGoals";
 import CardStackLayout from "../../layouts/CardStackLayout";
 import PaginatedParameterSummary from "../../tracking/PaginatedParameterSummary.jsx/PaginatedParameterSummary";
-import { Box } from "@chakra-ui/react";
-import RecordList from "../../../js/types/tracking/RecordList";
 
 const Steps = () => {
      // Get user data object from global app context
@@ -18,9 +16,9 @@ const Steps = () => {
 
      return (
           <CardStackLayout>
-               <PaginatedParameterSummary trackingParameter={trackingParameterState} aggregator={RecordList.aggregators.sum} />
-               <AddRecord trackingData={trackingParameterState} refreshTrackingData={refreshTrackingData} />
-               <ManageGoals trackingData={trackingParameterState} />
+               <PaginatedParameterSummary trackingParameter={trackingParameterState} />
+               <AddRecord trackingParameter={trackingParameterState} refreshTrackingParameter={refreshTrackingData} />
+               <ManageGoals trackingParameter={trackingParameterState} />
           </CardStackLayout>
      )
 }

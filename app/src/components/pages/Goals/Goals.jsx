@@ -12,8 +12,6 @@ const Goals = () => {
      // Store user step data object in local state
      const [trackingParameters] = useState(user.trackingParameters);
 
-     console.log(trackingParameters.getTrackingParameterByName("duration"));
-
      return (
           <CardStackLayout>
                {

@@ -2,22 +2,24 @@ import RecordList from "./RecordList";
 import TrackingParameterGroup from "./TrackingParameterGroup";
 import GoalList from "./GoalList";
 import TrackingParameterParent from "./TrackingParameterParent";
+import Aggregator from "./Aggregator";
 
 class VirtualTrackingParameter extends TrackingParameterParent {
 
      #name
      #parent
-     #children
      #computeFromChildren
      #displayFormatter
      #goals
+     #periodAggregators
 
-     constructor({ name, children, computeFromChildren, displayFormatter }) {
+     constructor({ name, goals, children, computeFromChildren, displayFormatter, periodAggregators }) {
           super(children);
           this.#name = name;
           this.#computeFromChildren = computeFromChildren;
           this.#displayFormatter = displayFormatter || ((recordData) => recordData);
-          this.#goals = new GoalList({ of: this });
+          this.#goals = goals || new GoalList({ of: this });
+          this.#periodAggregators = periodAggregators || { "daily": Aggregator.total, "weekly": Aggregator.total, "monthly": Aggregator.total };
      }
 
      getDescendentByName(name) {
@@ -54,19 +56,25 @@ class VirtualTrackingParameter extends TrackingParameterParent {
           // For each set of parallel records across the child RecordLists
           for (let i = 0; i < recordCount; i++) {
                let inputForIteration = {};
+               let startTime;
 
                // Add the value from each of the parallel records to the input object
                for (let key of keys) {
                     inputForIteration[key] = childRecordLists[key].list[i].value;
+                    startTime = startTime || childRecordLists[key].list[i].startTime;
                }
 
                virtualRecordList.addRecord({
-                    startTime: childRecordLists[keys[0]].list[i].startTime,
+                    startTime,
                     value: this.computeFromChildren(inputForIteration)
                })
           }
 
           return virtualRecordList;
+     }
+
+     getAggregator(period) {
+          return this.#periodAggregators[period];
      }
 
      get name() {
@@ -90,11 +98,17 @@ class VirtualTrackingParameter extends TrackingParameterParent {
      }
 
      get goals() {
-          let goals = { type: "virtual", goals: this.#goals, children: {} };
-          for (let parameterKey in this.group) {
-               goals.children[parameterKey] = super.children[parameterKey].goals;
-          }
-          return goals;
+          return this.#goals;
+     }
+
+     copy() {
+          return new VirtualTrackingParameter({
+               name: this.#name,
+               children: super.children,
+               computeFromChildren: this.#computeFromChildren,
+               goals: this.#goals,
+               displayFormatter: this.#displayFormatter,
+          });
      }
 
 }

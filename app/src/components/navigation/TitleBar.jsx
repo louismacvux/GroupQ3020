@@ -10,7 +10,7 @@ const TitleBar = (props) => {
      return (
           <div {...rest}>
                <Flex width="full" direction="row" justify="space-between" align="center" px="8" py="8">
-                    <Link href="" onClick={() => navigate('../')}>
+                    <Link onClick={() => navigate('../')}>
                          <HiArrowNarrowLeft className="w-6 h-6"></HiArrowNarrowLeft>
                     </Link>
                     <Heading as="h1" size="lg">{title}</Heading>

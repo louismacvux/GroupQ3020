@@ -1,3 +1,6 @@
+import Aggregator from "./Aggregator";
+import TrackingParameterGroup from "./TrackingParameterGroup";
+
 class Goal {
 
      #period
@@ -27,7 +30,11 @@ class Goal {
 
           let periodEnd = new Date(Date.now());
 
-          let current = this.of.records.computeTotalOverPeriod(periodStart, periodEnd);
+          if (!(this.of instanceof TrackingParameterGroup)) {
+               periodEnd = null;
+          }
+
+          let current = this.of.records.aggregatePeriod(periodStart, periodEnd, Aggregator.total);
 
           return {
                current,

@@ -1,4 +1,3 @@
-import { omit } from "lodash";
 import Record from "./Record";
 
 class RecordList {
@@ -6,11 +5,6 @@ class RecordList {
      #list
      #of
      #hasObjectValues
-
-     static aggregators = {
-          sum: (values) => values.reduce((previous, current) => previous + current),
-          average: (values) => values.reduce((previous, current) => previous + current) / values.length,
-     }
 
      constructor(recordListParams) {
           let { records, of, hasObjectValues } = recordListParams || {}
@@ -30,8 +24,7 @@ class RecordList {
           }
      }
 
-     aggregateByTime(bucketDuration, periodStartTime, periodEndTime, aggregator) {
-          aggregator = aggregator || RecordList.aggregators.average;
+     aggregateByInterval(bucketDuration, periodStartTime, periodEndTime, aggregator) {
           periodStartTime = periodStartTime ? new Date(periodStartTime).getTime() : null;
           periodEndTime = periodEndTime ? new Date(periodEndTime).getTime() : null;
 
@@ -73,12 +66,12 @@ class RecordList {
                     newValue = {};
                     for (let parameterKey in recordsInBucket[0].value) {
                          let parameterValues = bucket.value.map(record => record.value[parameterKey]);
-                         newValue[parameterKey] = aggregator(parameterValues);
+                         newValue[parameterKey] = aggregator.computeSummary(parameterValues);
                     }
                }
                else {
                     let parameterValues = bucket.value.map(record => record.value);
-                    newValue = aggregator(parameterValues);
+                    newValue = aggregator.computeSummary(parameterValues);
                }
                bucket.value = newValue;
           }
@@ -86,15 +79,29 @@ class RecordList {
           return buckets;
      }
 
-     computeTotalOverPeriod(startDate, endDate) {
+     aggregatePeriod(startDate, endDate, aggregator) {
+          if (!startDate) {
+               startDate = this.getFirstRecord().startTime;
+          }
+          if (!endDate) {
+               endDate = this.getLastRecord().startTime;
+          }
           let bucketDuration = endDate.getTime() - startDate.getTime();
-          let aggregated = this.aggregateByTime(bucketDuration, startDate, endDate);
+          let aggregated = this.aggregateByInterval(bucketDuration, startDate, endDate, aggregator);
           if (aggregated.length > 0) {
                return aggregated[0].value;
           }
           else {
                return 0;
           }
+     }
+
+     getFirstRecord() {
+          return this.list[0];
+     }
+
+     getLastRecord() {
+          return this.list[this.list.length - 1];
      }
 
      get list() {

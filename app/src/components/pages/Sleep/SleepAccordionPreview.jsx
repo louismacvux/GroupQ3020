@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ResponsiveContainer, XAxis, YAxis, AreaChart, Area, CartesianGrid } from "recharts";
 import { AppContext } from '../../App';
 import dayjs from "dayjs";
+import theme from '../../../theme/theme';
 
 const SleepAccordionPreview = () => {
      const [{ user }] = useContext(AppContext);
@@ -33,16 +34,16 @@ const SleepAccordionPreview = () => {
      }
 
      return (
-          <div className="h-80 cursor-pointer">
+          <div className="h-60 cursor-pointer">
                <Link to="/sleep">
                     <ResponsiveContainer >
                          {
                               graphData && (
                                    <AreaChart data={graphData} margin={{}}>
-                                        <CartesianGrid vertical={false} strokeDasharray={"2 8"} strokeOpacity={0.75} />
+                                        {/* <CartesianGrid vertical={false} strokeDasharray={"2 8"} strokeOpacity={0.75} /> */}
                                         <XAxis dataKey="time" padding={{ left: 80 }} axisList={false} tickFormatter={dateLabelFormatter} />
                                         <YAxis dataKey="sleepTimes" padding={{ bottom: 30, top: 30 }} mirror="true" axisList={false} tickFormatter={sleepTimeLabelFormatter} ticks={[-4, -2, 0, 2, 4, 6, 8, 10, 12]} domain={[-4, 10]} />
-                                        <Area dataKey="sleepTimes" stroke="#319795" fill="#319795" />
+                                        <Area dataKey="sleepTimes" stroke={theme.colors.primary["500"]} fill={theme.colors.primary["500"]} />
                                    </AreaChart>
                               )
                          }

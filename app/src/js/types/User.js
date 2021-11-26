@@ -9,7 +9,7 @@ const unitFormatter = (amount, unit, precision) => `${Number(amount).toFixed(pre
 
 const trackingParameters = {
      steps: new TrackingParameter({ name: "Steps" }),
-     distance: new TrackingParameter({ name: "Distance" }),
+     distance: new TrackingParameter({ name: "Distance", displayFormatter: (distance) => unitFormatter(distance, "km", 1) }),
      protein: new TrackingParameter({ name: "Protein", displayFormatter: (protein) => unitFormatter(protein, "g", 1) }),
      carbohydrates: new TrackingParameter({ name: "Carbohydrates", displayFormatter: (carbohydrates) => unitFormatter(carbohydrates, "g", 1) }),
      fat: new TrackingParameter({ name: "Fat", displayFormatter: (fat) => unitFormatter(fat, "g", 1) }),
@@ -39,9 +39,9 @@ class User {
                               {
                                    name: "Diet",
                                    children: {
-                                        calories: new VirtualTrackingParameter(
+                                        energy: new VirtualTrackingParameter(
                                              {
-                                                  name: "Calories",
+                                                  name: "Energy",
                                                   children: {
                                                        protein: trackingParameters.protein,
                                                        carbohydrates: trackingParameters.carbohydrates,
@@ -51,7 +51,7 @@ class User {
                                                        let calories = (protein * 4) + (carbohydrates * 4) + (fat * 9);
                                                        return calories;
                                                   },
-                                                  displayFormatter: (calories) => unitFormatter(calories, "g", 1),
+                                                  displayFormatter: (calories) => unitFormatter(calories, "cal", 1),
                                              })
                                    }
                               }),

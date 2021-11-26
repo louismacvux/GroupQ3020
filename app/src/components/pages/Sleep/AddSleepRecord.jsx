@@ -1,21 +1,24 @@
 import { FormControl, FormLabel, Button, NumberInput, NumberInputField } from "@chakra-ui/react";
-import TimeSelector from "../forms/TimeSelector";
+import TimeSelector from "../../forms/TimeSelector";
 import { Formik, Form, Field } from "formik";
 import dayjs from "dayjs";
 
-const AddEntry = (props) => {
+const AddSleepRecord = (props) => {
      const { trackingParameter, refreshTrackingParameter } = props;
 
      let initialValues = {
-          hour: dayjs().format("h"),
-          minute: dayjs().format("m"),
-          ampm: dayjs().format("a"),
-          recordValue: 0
+          "wake-hour": dayjs().format("h"),
+          "wake-minute": dayjs().format("m"),
+          "wake-ampm": dayjs().format("a"),
+          "sleep-hour": dayjs().format("h"),
+          "sleep-minute": dayjs().format("m"),
+          "sleep-ampm": dayjs().format("a"),
      };
 
      let formikProps = {
           initialValues,
-          onSubmit: ({ hour, minute, ampm, recordValue }, { resetForm }) => {
+          onSubmit: ({ hour, minute, ampm, recordValue, ...rest }, { resetForm }) => {
+               console.log(rest);
                hour = Number(hour);
                minute = Number(minute);
                recordValue = Number(recordValue);
@@ -56,19 +59,10 @@ const AddEntry = (props) => {
                          return (
                               <Form>
                                    <div className="flex flex-col gap-8">
-                                        <div className="flex flex-col gap-2">
-                                             <TimeSelector onChange={handleChange} onBlur={handleBlur} error={errors.time} />
+                                        <div className="flex flex-col gap-4">
+                                             <TimeSelector label={"Sleep"} name="sleep" onChange={handleChange} onBlur={handleBlur} error={errors.time} />
+                                             <TimeSelector label={"Wake"} name="wake" onChange={handleChange} onBlur={handleBlur} error={errors.time} />
                                              <span className="text-red-300">{errors.time}</span>
-                                             <Field name="recordValue">
-                                                  {({ field, form }) => (
-                                                       <FormControl>
-                                                            <FormLabel htmlFor="recordValue">Count</FormLabel>
-                                                            <NumberInput id="recordValue" {...field} onChange={(val) => form.setFieldValue(field.name, val)}>
-                                                                 <NumberInputField />
-                                                            </NumberInput>
-                                                       </FormControl>
-                                                  )}
-                                             </Field>
                                         </div>
                                         <Button type="submit" variant="solid">
                                              Add {trackingParameter.name}
@@ -82,4 +76,4 @@ const AddEntry = (props) => {
      )
 }
 
-export default AddEntry;
+export default AddSleepRecord;

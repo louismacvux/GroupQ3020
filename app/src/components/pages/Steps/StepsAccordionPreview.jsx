@@ -4,6 +4,8 @@ import { ResponsiveContainer, BarChart, XAxis, YAxis, Bar } from "recharts";
 import { HOUR_DURATION } from '../../../js/utils/time';
 import { AppContext } from '../../App';
 import dayjs from 'dayjs';
+import theme from '../../../theme/theme';
+import Aggregator from '../../../js/types/tracking/Aggregator';
 
 const StepsAccordionPreview = () => {
      // Obtain user data from context
@@ -19,7 +21,7 @@ const StepsAccordionPreview = () => {
           setGraphData(
                user.getTrackingParameterByName("steps")
                     .records
-                    .aggregateByTime(HOUR_DURATION * 2, startTime)
+                    .aggregateByInterval(HOUR_DURATION * 2, startTime, null, Aggregator.total)
                     .map((record) => ({
                          label: dayjs(new Date(record.startTime)).format("h:mma"),
                          value: record.value
@@ -34,7 +36,7 @@ const StepsAccordionPreview = () => {
                          <BarChart data={graphData} margin={{}}>
                               <XAxis dataKey="label" padding={{ left: 60 }} axisList={false} />
                               <YAxis dataKey="value" mirror="true" axisList={false} />
-                              <Bar dataKey="value" fill="#319795" barSize={4} />
+                              <Bar dataKey="value" fill={theme.colors.primary["500"]} barSize={4} />
                          </BarChart>
                     </ResponsiveContainer>
                </Link>

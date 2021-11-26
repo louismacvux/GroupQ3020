@@ -8,6 +8,8 @@ import SummaryIntervalSelectionModal from "./SummaryIntervalSelectionModal";
 import toTitleCase from "../../../js/utils/toTitleCase";
 import { pick } from "lodash";
 import ListItemContainer from "../../layouts/ListItemContainer";
+import Aggregator from "../../../js/types/tracking/Aggregator";
+import TrackingParameterGroup from "../../../js/types/tracking/TrackingParameterGroup";
 
 let datePeriodParams = {
      "daily": {
@@ -56,7 +58,7 @@ let TODAY;
 
 const PaginatedParameterSummary = (props) => {
 
-     let { trackingParameter, periodOptions, aggregator } = props;
+     let { trackingParameter, periodOptions } = props;
      datePeriodParams = periodOptions ? pick(datePeriodParams, periodOptions) : datePeriodParams;
 
      TODAY = new Date(Date.now());
@@ -93,11 +95,11 @@ const PaginatedParameterSummary = (props) => {
      )
 
      return (
-          <div>
+          <div className="flex flex-col gap-8">
                <CardTitle leftIcon={leftIcon} rightIcon={rightIcon} size="sm" onClick={() => onOpen()} className="cursor-pointer">
                     {getTitle(period, dateRange)}
                </CardTitle>
-               <ParameterSummaryResults trackingParameter={trackingParameter} dateRange={dateRange} period={period} aggregator={aggregator} />
+               <ParameterSummaryResults trackingParameter={trackingParameter} dateRange={dateRange} period={period} />
                <SummaryIntervalSelectionModal
                     interval={period}
                     intervalOptions={Object.keys(datePeriodParams)}
@@ -139,27 +141,29 @@ let nextDateRange = (period, dateRange, direction) => {
 }
 
 const ParameterSummaryResults = (props) => {
-     let { trackingParameter, dateRange, period, aggregator } = props;
+     let { trackingParameter, dateRange, period } = props;
+
+     let aggregator = trackingParameter.getAggregator(period);
 
      let aggregated;
      let results;
 
      if (trackingParameter.records.hasObjectValues) {
-          aggregated = trackingParameter.records.computeTotalOverPeriod(dateRange.start, dateRange.end, aggregator);
+          aggregated = trackingParameter.records.aggregateByInterval(datePeriodParams[period].summaryInterval, dateRange.start, dateRange.end, aggregator)[0].value;
           results = Object.keys(aggregated).map((parameterName) => {
                let parameter = trackingParameter.getDescendentByName(parameterName);
                return {
-                    label: toTitleCase(parameterName),
+                    label: aggregator.formatName(toTitleCase(parameterName), period),
                     value: parameter.displayFormatter(aggregated[parameterName])
                }
           })
      }
      else {
           let summaryIntervalDuration = datePeriodParams[period].summaryInterval;
-          aggregated = trackingParameter.records.aggregateByTime(summaryIntervalDuration, dateRange.start, dateRange.end, aggregator);
+          aggregated = trackingParameter.records.aggregateByInterval(summaryIntervalDuration, dateRange.start, dateRange.end, aggregator);
           results = aggregated.map((record) => {
                return {
-                    label: datePeriodParams[period].getTimeColumn(record.startTime, record.endTime),
+                    label: aggregator.formatName(datePeriodParams[period].getTimeColumn(record.startTime, record.endTime), period),
                     value: trackingParameter.displayFormatter(record.value)
                }
           })

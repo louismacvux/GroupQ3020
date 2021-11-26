@@ -11,13 +11,14 @@ import {
 import { Field } from "formik";
 
 const TimeSelector = (props) => {
+     let { name, label } = props;
      return (
           <div className="flex gap-4 items-end">
-               <Field name="hour">
+               <Field name={(name ? name + "-" : "") + "hour"}>
                     {({ field, form }) => (
-                         <FormControl id="hour">
-                              <FormLabel>Hour</FormLabel>
-                              <NumberInput id="hour" {...field} onChange={val => form.setFieldValue(field.name, val)} isInvalid={Object.keys(form.errors).length > 0} min={1} max={12} >
+                         <FormControl id={(name ? name + "-" : "") + "hour"}>
+                              <FormLabel>{label} Hour</FormLabel>
+                              <NumberInput id={(name ? name + "-" : "") + "hour"} {...field} onChange={val => form.setFieldValue(field.name, val)} isInvalid={Object.keys(form.errors).length > 0} min={1} max={12} >
                                    <NumberInputField />
                                    <NumberInputStepper>
                                         <NumberIncrementStepper />
@@ -27,11 +28,11 @@ const TimeSelector = (props) => {
                          </FormControl>
                     )}
                </Field>
-               <Field name="minute">
+               <Field name={(name ? name + "-" : "") + "minute"}>
                     {({ field, form }) => (
-                         <FormControl id="minute">
-                              <FormLabel>Minute</FormLabel>
-                              <NumberInput id="minute" {...field} onChange={val => form.setFieldValue(field.name, val)} isInvalid={Object.keys(form.errors).length > 0} min={0} max={59} >
+                         <FormControl id={(name ? name + "-" : "") + "minute"}>
+                              <FormLabel>{label} Minute</FormLabel>
+                              <NumberInput id={(name ? name + "-" : "") + "minute"} {...field} onChange={val => form.setFieldValue(field.name, val)} isInvalid={Object.keys(form.errors).length > 0} min={0} max={59} >
                                    <NumberInputField />
                                    <NumberInputStepper>
                                         <NumberIncrementStepper />
@@ -41,10 +42,10 @@ const TimeSelector = (props) => {
                          </FormControl>
                     )}
                </Field>
-               <Field name="ampm">
+               <Field name={(name ? name + "-" : "") + "ampm"}>
                     {({ field, form }) => (
                          <FormControl>
-                              <Select {...field} id="ampm" isInvalid={Object.keys(form.errors).length > 0}>
+                              <Select {...field} id={(name ? name + "-" : "") + "ampm"} isInvalid={Object.keys(form.errors).length > 0}>
                                    <option value="am" key="1">AM</option>,
                                    <option value="pm" key="2">PM</option>
                               </Select>
